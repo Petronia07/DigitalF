@@ -32,7 +32,6 @@ class AuthController extends Controller
         $verificationCode = Str::random(6);
         $user->verification_code = $verificationCode;
 
-        //reponse
         if ($user->save()) {
 
             // Envoi de l'email de vérification
@@ -54,7 +53,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        // vérifier l'existence de l'utilisateur
+
         $user = User::where('email', '=', $request->email)->first();
 
         if ($user) {
@@ -65,7 +64,7 @@ class AuthController extends Controller
                 ], 403);
             }
 
-            // vérifier le mot de passe
+    
             if (Hash::check($request->password, $user->password)) {
                 // création d'un token JWT
                 $accessToken = $user->createToken('authToken')->accessToken;
@@ -130,13 +129,10 @@ class AuthController extends Controller
             'email' => 'required|email|exists:users,email',
         ]);
 
-        // Récupération de l'étudiant
         $user = User::where('email', $request->email)->first();
 
-        // Génération du token de réinitialisation
         $accessToken = $user->createToken('authToken')->accessToken;
 
-        // Stocke le token de manière sécurisée
         $user->remember_token = Hash::make($accessToken);
         $user->save();
 
@@ -158,10 +154,8 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:8',
         ]);
 
-        // Recherche de l'utilisateur avec l'email
         $user = User::where('email', $request->email)->first();
 
-        // Vérification du token de réinitialisation
         if (!$user || !Hash::check($request->password_reset_token, $user->remember_token)) {
             return response()->json(['message' => 'Token de réinitialisation invalide.'], 400);
         }
