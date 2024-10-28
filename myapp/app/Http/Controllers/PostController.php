@@ -11,7 +11,7 @@ class PostController extends Controller
 {
     public function create(Request $request)
     {
-        // Validation des données
+
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
@@ -19,7 +19,7 @@ class PostController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
         ]);
 
-        // Enregistrer l'image si elle est fournie
+
         $imagePath = null;
         $imageUrl = null;
         if ($request->hasFile('image')) {
@@ -27,10 +27,10 @@ class PostController extends Controller
             $imageUrl = asset('storage/' . $imagePath);
         }
 
-        // Créer le post
+
         $post = Post::create([
             'user_id' => Auth::id(),
-            'category_id' => $request->category_id, // ID de la catégorie
+            'category_id' => $request->category_id, 
             'title' => $request->title,
             'content' => $request->content,
             'image' => $imagePath,
@@ -44,10 +44,9 @@ class PostController extends Controller
     {
         $user_id = Auth::user()->id;
 
-        // Récupérer les Posts de l'utilisateur connecté avec les catégories associées
         $posts = Post::with('category')->where('user_id', $user_id)->get();
 
-        // Organiser les Posts par catégories
+   
         $groupedByCategory = $posts->groupBy('category.name');
 
         return response()->json([
@@ -60,9 +59,9 @@ class PostController extends Controller
     public function show($id)
     {
         $user_id = Auth::user()->id;
-        //vérifions si le Post appartient à l'utilisateur connecté
+
         if (Post::where(['id' => $id, 'user_id' => $user_id])->exists()) {
-            //retournons le Post
+
             $post = Post::where(['id' => $id, 'user_id' => $user_id])->get();
             return response()->json([
                 'message' => "detail du Post",
@@ -113,11 +112,11 @@ class PostController extends Controller
     //Supprimer un post
     public function delete($id)
     {
-        //récupération de l'utilisateur connecté
+ 
         $user_id = Auth::user()->id;
 
         if (Post::where(['id' => $id, 'user_id' => $user_id])->exists()) {
-            //retournons le projet
+
             $post = Post::where(['id' => $id, 'user_id' => $user_id])->first();
             $post->delete();
             return response()->json([
