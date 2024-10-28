@@ -16,12 +16,11 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-         // Vérifier si l'utilisateur est authentifié et si son rôle est "admin"
+       
          if (Auth::check() && Auth::user()->role === 'admin') {
-            return $next($request); // Permettre l'accès si l'utilisateur est un admin
+            return $next($request); 
         }
 
-        // Rediriger ou renvoyer un message d'erreur si l'utilisateur n'est pas un admin
         return response()->json(['message' => 'Accès refusé : vous n\'avez pas les permissions nécessaires'], 403);
        
     }
