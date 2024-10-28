@@ -10,17 +10,14 @@ class CategoryController extends Controller
 {
     public function store(Request $request)
     {
-        // Vérifier si l'utilisateur est admin
         if (Auth::user()->role !== 'admin') {
             return response()->json(['message' => 'Accès refusé. Seul un administrateur peut créer des catégories.'], 403);
         }
     
-        // Validation des données
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-    
-        // Créer la catégorie si l'utilisateur est admin
+
         $category = Category::create([
             'name' => $request->name,
         ]);
@@ -40,7 +37,6 @@ class CategoryController extends Controller
 
     public function delete($id)
     {
-        // Vérification si la catégorie existe
         $category = Category::find($id);
 
         if ($category) {
